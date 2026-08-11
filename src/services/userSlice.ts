@@ -7,7 +7,9 @@ import {
   loginUserApi,
   logoutApi,
   registerUserApi,
-  updateUserApi
+  updateUserApi,
+  forgotPasswordApi,
+  resetPasswordApi
 } from '../utils/burger-api';
 import { setCookie, deleteCookie } from '../utils/cookie';
 
@@ -24,6 +26,22 @@ const initialState: TUserState = {
   isAuthenticated: false,
   error: null
 };
+
+export const forgotPassword = createAsyncThunk(
+  'user/forgotPassword',
+  async (data: { email: string }) => {
+    const response = await forgotPasswordApi(data);
+    return response;
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  'user/resetPassword',
+  async (data: { password: string; token: string }) => {
+    const response = await resetPasswordApi(data);
+    return response;
+  }
+);
 
 export const registerUser = createAsyncThunk(
   'user/register',
@@ -99,10 +117,18 @@ export const userSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.error = null;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Ошибка обновления данных';
       });
   }
 });
