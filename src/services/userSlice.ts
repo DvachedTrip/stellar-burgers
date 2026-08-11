@@ -40,7 +40,7 @@ export const loginUser = createAsyncThunk(
   async (loginData: TLoginData) => {
     const response = await loginUserApi(loginData);
     setCookie('accessToken', response.accessToken);
-    setCookie('refreshToken', response.refreshToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
     return response.user;
   }
 );
@@ -61,7 +61,7 @@ export const updateUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
   await logoutApi();
   deleteCookie('accessToken');
-  deleteCookie('refreshToken');
+  localStorage.removeItem('refreshToken');
 });
 
 export const userSlice = createSlice({
