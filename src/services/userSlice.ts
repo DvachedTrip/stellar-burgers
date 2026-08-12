@@ -17,6 +17,8 @@ type TUserState = {
   user: TUser | null;
   isAuthChecked: boolean;
   isAuthenticated: boolean;
+  isLoading: boolean;
+  resetRequested: boolean;
   error: string | null;
 };
 
@@ -24,6 +26,8 @@ const initialState: TUserState = {
   user: null,
   isAuthChecked: false,
   isAuthenticated: false,
+  isLoading: false,
+  resetRequested: false,
   error: null
 };
 
@@ -85,7 +89,11 @@ export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
 export const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    }
+  },
   selectors: {
     selectUser: (state) => state.user,
     selectIsAuthChecked: (state) => state.isAuthChecked,
@@ -96,39 +104,98 @@ export const userSlice = createSlice({
     builder
       .addCase(getUser.pending, (state) => {
         state.isAuthChecked = false;
+        state.isLoading = true;
       })
       .addCase(getUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthenticated = true;
         state.isAuthChecked = true;
+        state.isLoading = false;
       })
       .addCase(getUser.rejected, (state) => {
         state.isAuthenticated = false;
         state.isAuthChecked = true;
+        state.isLoading = false;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.isAuthChecked = true;
         state.isAuthenticated = true;
         state.error = null;
+        state.isLoading = false;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.error = action.error.message ?? 'Ошибка входа';
+        state.isLoading = false;
+      })
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.isAuthChecked = true;
         state.error = null;
+        state.isLoading = false;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Ошибка регистрации';
+        state.isLoading = false;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+        state.isLoading = false;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Ошибка выхода';
+        state.isLoading = false;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.error = null;
+        state.isLoading = false;
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.error = action.error.message ?? 'Ошибка обновления данных';
+        state.isLoading = false;
+      })
+      .addCase(forgotPassword.pending, (state) => {
+        state.resetRequested = false;
+        state.error = null;
+        state.isLoading = true;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        localStorage.setItem('resetRequested', 'true');
+        state.resetRequested = true;
+        state.isLoading = false;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.resetRequested = false;
+        state.error = action.error.message ?? 'Ошибка запроса сброса пароля';
+        state.isLoading = false;
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.error = null;
+        state.isLoading = true;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        localStorage.removeItem('resetRequested');
+        state.resetRequested = false;
+        state.isLoading = false;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Ошибка сброса пароля';
+        state.isLoading = false;
       });
   }
 });
@@ -139,3 +206,5 @@ export const {
   selectIsAuthenticated,
   selectUserError
 } = userSlice.selectors;
+
+export const { clearError } = userSlice.actions;
