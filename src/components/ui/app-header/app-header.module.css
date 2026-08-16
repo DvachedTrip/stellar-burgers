@@ -24,6 +24,11 @@
   color: var(--text-primary-color);
 }
 
+.nav_item {
+  display: flex;
+  cursor: pointer;
+}
+
 .link_position_last {
   display: flex;
   justify-content: flex-end;
