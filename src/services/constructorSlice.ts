@@ -15,14 +15,24 @@ export const constructorSlice = createSlice({
   name: 'burgerConstructor',
   initialState,
   reducers: {
-    addBun: (state, action: PayloadAction<TIngredient>) => {
-      state.bun = { ...action.payload, id: nanoid() };
+    addBun: {
+      reducer: (state, action: PayloadAction<TIngredient & { id: string }>) => {
+        state.bun = action.payload;
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: { ...ingredient, id: nanoid() }
+      })
     },
     removeBun: (state) => {
       state.bun = null;
     },
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      state.ingredients.push({ ...action.payload, id: nanoid() });
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TIngredient>) => {
+        state.ingredients.push({ ...action.payload, id: nanoid() });
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: { ...ingredient, id: nanoid() }
+      })
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(

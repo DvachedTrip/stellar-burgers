@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from '../../services/store';
 
 import {
   fetchOrderByNumber,
-  selectOrderModalData,
-  selectUserOrders
+  selectViewedOrder
 } from '../../services/orderSlice';
 import { selectIngredients } from '../../services/ingredientsSlice';
 
@@ -21,7 +20,7 @@ export const OrderInfo: FC = () => {
     dispatch(fetchOrderByNumber(Number(number)));
   }, [number, dispatch]);
 
-  const orderData = useSelector(selectOrderModalData);
+  const orderData = useSelector(selectViewedOrder);
   const ingredients = useSelector(selectIngredients);
 
   /* Готовим данные для отображения */

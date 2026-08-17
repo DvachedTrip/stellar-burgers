@@ -24,10 +24,10 @@ export const BurgerConstructor: FC = () => {
 
   const dispatch = useDispatch();
 
-  const onOrderClick = () => {
+  const onOrderClick = async () => {
     if (!constructorItems.bun || orderRequest) return;
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: location } });
+      navigate('/login');
       return;
     }
 
@@ -36,11 +36,16 @@ export const BurgerConstructor: FC = () => {
       ...constructorItems.ingredients.map((i) => i._id),
       constructorItems.bun._id
     ];
-    dispatch(createOrder(ingredientsIds));
+    try {
+      await dispatch(createOrder(ingredientsIds)).unwrap();
+      dispatch(clearConstructor());
+    } catch {
+      // ошибка обрабатывается через стор
+    }
   };
+
   const closeOrderModal = () => {
     dispatch(resetOrderModalData());
-    dispatch(clearConstructor());
   };
 
   const price = useMemo(

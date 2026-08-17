@@ -9,6 +9,7 @@ import { TOrder } from '../utils/types';
 type TOrderState = {
   orderRequest: boolean;
   orderModalData: TOrder | null;
+  viewedOrder: TOrder | null;
   error: string | undefined;
   isLoading: boolean;
   userOrders: TOrder[];
@@ -17,6 +18,7 @@ type TOrderState = {
 const initialState: TOrderState = {
   orderRequest: false,
   orderModalData: null,
+  viewedOrder: null,
   error: undefined,
   isLoading: false,
   userOrders: []
@@ -65,7 +67,7 @@ export const orderSlice = createSlice({
       })
       .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
         state.orderRequest = false;
-        state.orderModalData = action.payload.orders[0];
+        state.viewedOrder = action.payload.orders[0];
       })
       .addCase(fetchOrderByNumber.rejected, (state, action) => {
         state.orderRequest = false;
@@ -88,6 +90,7 @@ export const orderSlice = createSlice({
     selectUserOrders: (state) => state.userOrders,
     selectOrderRequest: (state) => state.orderRequest,
     selectOrderModalData: (state) => state.orderModalData,
+    selectViewedOrder: (state) => state.viewedOrder,
     selectOrderError: (state) => state.error
   }
 });
@@ -97,5 +100,6 @@ export const {
   selectOrderRequest,
   selectOrderModalData,
   selectOrderError,
-  selectUserOrders
+  selectUserOrders,
+  selectViewedOrder
 } = orderSlice.selectors;
