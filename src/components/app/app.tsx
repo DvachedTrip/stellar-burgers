@@ -116,11 +116,9 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <ProtectedRouter>
-                <Modal title='Детали заказа' onClose={() => navigate(-1)}>
-                  <OrderInfo />
-                </Modal>
-              </ProtectedRouter>
+              <Modal title='Детали заказа' onClose={() => navigate(-1)}>
+                <OrderInfo />
+              </Modal>
             }
           />
           <Route
