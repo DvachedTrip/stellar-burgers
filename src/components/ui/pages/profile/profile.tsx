@@ -13,7 +13,8 @@ export const ProfileUI: FC<ProfileUIProps> = ({
   updateUserError,
   handleSubmit,
   handleCancel,
-  handleInputChange
+  handleInputChange,
+  inputError
 }) => (
   <main className={`${commonStyles.container}`}>
     <div className={`mt-30 mr-15 ${styles.menu}`}>
@@ -31,8 +32,8 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             onChange={handleInputChange}
             value={formValue.name}
             name={'name'}
-            error={false}
-            errorText={''}
+            error={!!inputError?.name}
+            errorText={inputError?.name || ''}
             size={'default'}
             icon={'EditIcon'}
           />
@@ -44,8 +45,8 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             onChange={handleInputChange}
             value={formValue.email}
             name={'email'}
-            error={false}
-            errorText={''}
+            error={!!inputError?.email}
+            errorText={inputError?.email || ''}
             size={'default'}
             icon={'EditIcon'}
           />
@@ -57,8 +58,8 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             onChange={handleInputChange}
             value={formValue.password}
             name={'password'}
-            error={false}
-            errorText={''}
+            error={!!inputError?.password}
+            errorText={inputError?.password || ''}
             size={'default'}
             icon={'EditIcon'}
           />
